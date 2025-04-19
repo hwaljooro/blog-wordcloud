@@ -61,8 +61,8 @@ def generate_wordcloud(text):
 
 # 예시 실행
 query = "여주 농촌체험"
-start_date = "20230301"
-end_date = "20230630"
+start_date = "20230401"
+end_date = "20250331"
 max_pages = 3
 
 all_text = get_blog_data(query, start_date, end_date, max_pages)
