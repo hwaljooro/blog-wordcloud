@@ -8,7 +8,7 @@ import time
 
 # Streamlit UI
 st.title("🔍 네이버 블로그 키워드 워드클라우드 분석기")
-st.markdown("네이버 블로그의 게시물 제목을 분석하여 워드클라우드를 생성합니다.")
+st.markdown("네이버 블로그의 게시물 제목과 본문을 분석하여 워드클라우드를 생성합니다.")
 
 query = st.text_input("검색어를 입력하세요 (예: 여주 농촌체험)", value="여주 농촌체험")
 col1, col2 = st.columns(2)
@@ -31,6 +31,17 @@ if st.button("분석 시작"):
             for item in items:
                 title = item.text.strip()
                 all_text += " " + title
+                
+                # 본문 내용 수집
+                blog_url = item['href']
+                blog_res = requests.get(blog_url, headers=headers)
+                blog_soup = BeautifulSoup(blog_res.text, "html.parser")
+                content = blog_soup.select_one(".se-main-container")
+                
+                if content:
+                    # 본문 텍스트를 추출해서 합침
+                    all_text += " " + content.get_text()
+
             time.sleep(1)
 
         if all_text.strip() == "":
