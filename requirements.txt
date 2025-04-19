@@ -1,7 +1,7 @@
-streamlit
-requests
-beautifulsoup4
-wordcloud
-matplotlib
 selenium
+beautifulsoup4
+requests
+textblob
+matplotlib
+wordcloud
 webdriver-manager
