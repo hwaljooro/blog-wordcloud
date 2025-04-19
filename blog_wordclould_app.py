@@ -26,7 +26,7 @@ def analyze_sentiment(text):
 
 def get_text_from_url_selenium(driver, url):
     try:
-        driver.get("https://www.naver.com")
+        driver.get(url)
         time.sleep(2)
         soup = BeautifulSoup(driver.page_source, "html.parser")
         content = soup.select_one(".se-main-container")  # 블로그 글
@@ -54,7 +54,7 @@ if st.button("분석 시작"):
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
-        driver = webdriver.Chrome(ChromeDriverManager().install())
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     sentiment_results = {"긍정": 0, "부정": 0, "중립": 0}
     detailed_results = []
