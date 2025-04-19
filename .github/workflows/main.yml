@@ -1,0 +1,32 @@
+name: Web Scraping Workflow
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 푸시될 때마다 실행됩니다.
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest  # GitHub의 최신 우분투 환경에서 실행
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        sudo apt-get update
+        sudo apt-get install -y libglib2.0-0 libnss3 libgdk-pixbuf2.0-0 libatk-bridge2.0-0 libatk1.0-0 libcups2 libx11-xcb1 libxcomposite1 libxrandr2 libgbm1 libasound2 libnss3 libxss1 libxtst6
+        sudo apt-get install -y chromium-browser
+        sudo apt-get install -y chromium-chromedriver
+
+    - name: Run script
+      run: |
+        python blog_wordcloud.py
