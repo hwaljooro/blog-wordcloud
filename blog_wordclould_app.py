@@ -7,8 +7,8 @@ import datetime
 import time
 
 # Streamlit UI
-st.title("🔍 네이버 블로그 키워드 워드클라우드 분석기")
-st.markdown("네이버 블로그의 게시물 제목과 본문을 분석하여 워드클라우드를 생성합니다.")
+st.title("🔍 네이버 블로그와 카페 키워드 워드클라우드 분석기")
+st.markdown("네이버 블로그와 카페의 게시물 제목과 본문을 분석하여 워드클라우드를 생성합니다.")
 
 query = st.text_input("검색어를 입력하세요 (예: 여주 농촌체험)", value="여주 농촌체험")
 col1, col2 = st.columns(2)
@@ -20,15 +20,18 @@ with col2:
 max_pages = st.slider("검색할 페이지 수 (1페이지당 약 10개 게시글)", min_value=1, max_value=10, value=3)
 
 if st.button("분석 시작"):
-    with st.spinner("네이버 블로그 데이터를 수집 중입니다..."):
+    with st.spinner("네이버 블로그와 카페 데이터를 수집 중입니다..."):
         all_text = ""
         headers = {"User-Agent": "Mozilla/5.0"}
         for page in range(1, max_pages + 1):
+            # 블로그와 카페를 모두 포함하는 URL
             url = f"https://search.naver.com/search.naver?where=view&sm=tab_jum&query={query}&nso=so%3Add%2Cp%3Afrom{start_date.strftime('%Y%m%d')}to{end_date.strftime('%Y%m%d')}&start={(page - 1) * 10 + 1}"
             res = requests.get(url, headers=headers)
             soup = BeautifulSoup(res.text, "html.parser")
-            items = soup.select(".api_txt_lines.total_tit")
-            for item in items:
+            
+            # 블로그 제목 및 링크
+            blog_items = soup.select(".api_txt_lines.total_tit")
+            for item in blog_items:
                 title = item.text.strip()
                 all_text += " " + title
                 
@@ -39,8 +42,22 @@ if st.button("분석 시작"):
                 content = blog_soup.select_one(".se-main-container")
                 
                 if content:
-                    # 본문 텍스트를 추출해서 합침
                     all_text += " " + content.get_text()
+            
+            # 카페 제목 및 링크
+            cafe_items = soup.select(".api_txt_lines.total_tit")
+            for item in cafe_items:
+                title = item.text.strip()
+                all_text += " " + title
+                
+                # 카페 본문 내용 수집
+                cafe_url = item['href']
+                cafe_res = requests.get(cafe_url, headers=headers)
+                cafe_soup = BeautifulSoup(cafe_res.text, "html.parser")
+                cafe_content = cafe_soup.select_one(".se-main-container")
+                
+                if cafe_content:
+                    all_text += " " + cafe_content.get_text()
 
             time.sleep(1)
 
