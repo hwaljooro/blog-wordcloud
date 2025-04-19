@@ -1,14 +1,14 @@
-name: Web Scraping
+name: Blog Sentiment Analyzer
 
 on:
   workflow_dispatch:
 
 jobs:
-  run-scraper:
+  run-script:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -16,20 +16,21 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install Chrome & Chromedriver
         run: |
           sudo apt update
-          sudo apt install -y wget unzip xvfb libxi6 libgconf-2-4 libnss3 libxss1 libappindicator1 libindicator7
+          sudo apt install -y wget unzip xvfb libxi6 libgconf-2-4 libnss3 libxss1 libappindicator1 libindicator7 fonts-nanum
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
-          CHROME_VERSION=$(google-chrome --version)
-          echo "Installed Chrome: $CHROME_VERSION"
           wget https://chromedriver.storage.googleapis.com/$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
-          pip install -r requirements.txt
 
-      - name: Run scraping script
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run sentiment analysis script
         run: |
+          export GITHUB_ACTIONS=true
           python blog_wordcloud.py
