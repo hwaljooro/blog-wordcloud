@@ -60,7 +60,7 @@ def generate_wordcloud(text):
     plt.show()
 
 # 예시 실행
-query = "여주 농촌체험"
+query = "프루떼"
 start_date = "20230401"
 end_date = "20250331"
 max_pages = 3
