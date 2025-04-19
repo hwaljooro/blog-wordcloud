@@ -24,18 +24,18 @@ if st.button("분석 시작"):
         all_text = ""
         headers = {"User-Agent": "Mozilla/5.0"}
         for page in range(1, max_pages + 1):
-            # 블로그와 카페를 모두 포함하는 URL
+            # 블로그와 카페를 포함한 URL (전체 검색 결과)
             url = f"https://search.naver.com/search.naver?where=view&sm=tab_jum&query={query}&nso=so%3Add%2Cp%3Afrom{start_date.strftime('%Y%m%d')}to{end_date.strftime('%Y%m%d')}&start={(page - 1) * 10 + 1}"
             res = requests.get(url, headers=headers)
             soup = BeautifulSoup(res.text, "html.parser")
             
-            # 블로그 제목 및 링크
+            # 블로그 제목 및 링크 (블로그만 포함된 검색 결과)
             blog_items = soup.select(".api_txt_lines.total_tit")
             for item in blog_items:
                 title = item.text.strip()
                 all_text += " " + title
                 
-                # 본문 내용 수집
+                # 본문 내용 수집 (블로그 본문)
                 blog_url = item['href']
                 blog_res = requests.get(blog_url, headers=headers)
                 blog_soup = BeautifulSoup(blog_res.text, "html.parser")
@@ -43,8 +43,8 @@ if st.button("분석 시작"):
                 
                 if content:
                     all_text += " " + content.get_text()
-            
-            # 카페 제목 및 링크
+
+            # 카페 제목 및 링크 (카페만 포함된 검색 결과)
             cafe_items = soup.select(".api_txt_lines.total_tit")
             for item in cafe_items:
                 title = item.text.strip()
