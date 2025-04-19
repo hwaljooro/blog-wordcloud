@@ -1,7 +1,6 @@
 selenium
+webdriver-manager
 beautifulsoup4
-requests
-textblob
 matplotlib
 wordcloud
-webdriver-manager
+textblob
